@@ -1,3 +1,5 @@
+This fork of PYPOWER is pending edits where an option to solve with HHL/VQE will be added to Newton's method.
+
 **PYPOWER** is a power flow and Optimal Power Flow (OPF) solver. It is a port of
 MATPOWER_ to the Python_ programming language. Current
 features include:
