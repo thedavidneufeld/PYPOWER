@@ -15,6 +15,8 @@ from scipy.sparse.linalg import spsolve
 from pypower.dSbus_dV import dSbus_dV
 from pypower.ppoption import ppoption
 
+from .HHL_conversion import hhl_helper
+
 
 def newtonpf(Ybus, Sbus, V0, ref, pv, pq, ppopt=None):
     """Solves the power flow using a full Newton's method.
@@ -97,7 +99,12 @@ def newtonpf(Ybus, Sbus, V0, ref, pv, pq, ppopt=None):
             ], format="csr")
 
         ## compute update step
-        dx = -1 * spsolve(J, F)
+        # dx = -1 * spsolve(J, F)
+
+        ## compute update step with HHL
+        J_dense = J.toarray()  ## create a dense version of J
+        hhl = hhl_helper()  ## initialize an instance of hhl_helper
+        dx = -1 * hhl.run_HHL(J_dense, F, 1e-2)  ## update with HHL
 
         ## update voltage
         if npv:
