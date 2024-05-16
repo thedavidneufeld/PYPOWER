@@ -8,6 +8,7 @@
 import sys
 
 from numpy import array, angle, exp, linalg, conj, r_, Inf
+from numpy import average
 
 from scipy.sparse import hstack, vstack
 from scipy.sparse.linalg import spsolve
@@ -99,12 +100,17 @@ def newtonpf(Ybus, Sbus, V0, ref, pv, pq, ppopt=None):
             ], format="csr")
 
         ## compute update step
-        # dx = -1 * spsolve(J, F)
+        dx1 = -1 * spsolve(J, F)
 
         ## compute update step with HHL
         J_dense = J.toarray()  ## create a dense version of J
         hhl = hhl_helper()  ## initialize an instance of hhl_helper
-        dx = -1 * hhl.run_HHL(J_dense, F, 1e-2)  ## update with HHL
+        dx = -1 * hhl.run_HHL(J_dense, F, 1e-8)  ## update with HHL
+
+        ## get average of scaling factors between classical and quantum
+        ## and scale quantum solution accordingly
+        s = average(dx1/dx)
+        dx = s*dx
 
         ## update voltage
         if npv:
