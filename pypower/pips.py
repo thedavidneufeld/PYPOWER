@@ -386,7 +386,7 @@ def pips(f_fcn, x0=None, A=None, l=None, u=None, xmin=None, xmax=None,
             hstack([dg.T, sparse((neq, neq))])
         ])
         bb = r_[-N, -g]
-
+        print("Using SPSolve for Interior Point Method (OPF) .........")
         dxdlam = spsolve(Ab.tocsr(), bb)
 
         if any(isnan(dxdlam)):

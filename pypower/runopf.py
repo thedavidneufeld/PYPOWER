@@ -13,7 +13,7 @@ from pypower.ppoption import ppoption
 from pypower.opf import opf
 from pypower.printpf import printpf
 from pypower.savecase import savecase
-
+from pypower.case9 import case9
 
 def runopf(casedata=None, ppopt=None, fname='', solvedcase=''):
     """Runs an optimal power flow.
@@ -53,5 +53,5 @@ def runopf(casedata=None, ppopt=None, fname='', solvedcase=''):
 
 
 if __name__ == '__main__':
-    ppopt = ppoption(OPF_ALG=580)
-    runopf(None, ppopt)
+    ppopt = ppoption(OPF_ALG=560, VERBOSE=2)
+    runopf(case9(), ppopt)
