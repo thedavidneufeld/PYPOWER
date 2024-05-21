@@ -15,16 +15,57 @@ from qiskit.quantum_info import Statevector
 class hhl_helper:
     
     def _make_2nx2n(self, matrix, vector):
-        # this function assumes that the matrix is square
-        # if matrix is not 2^n x 2^n, then set n to the next highest power of 2
-        if not log(matrix.shape[0], 2).is_integer():
-            n = 2**(ceil(log(matrix.shape[0], 2)))
-            matrix = np.pad(matrix, ((0, n-matrix.shape[0]), (0, n-matrix.shape[1])), 'constant', constant_values = (0))
-            vector.resize(1, n, refcheck=False)
+        if matrix.shape[0] != matrix.shape[1]:
+            raise ValueError("The matrix must be square")
+
+        original_size = matrix.shape[0]
+        if not log(original_size, 2).is_integer():
+            n = 2 ** ceil(log(original_size, 2))
+            #print(f"Original matrix size: {original_size}, Resized matrix size: {n}")
+
+            # Calculate padding dimensions
+            pad_height = n - matrix.shape[0]
+            pad_width = n - matrix.shape[1]
+
+            #print(f"Padding matrix: pad_height = {pad_height}, pad_width = {pad_width}")
+
+            try:
+                # Padding the matrix
+                matrix = np.pad(matrix, ((0, pad_height), (0, pad_width)), mode='constant', constant_values=0)
+                #print(f"Matrix after padding:\n{matrix}")
+            except ValueError as e:
+                print(f"Error padding matrix: {e}")
+                print(f"Matrix shape: {matrix.shape}")
+                print(f"Padding dimensions: ((0, {pad_height}), (0, {pad_width}))")
+                raise
+
+            # Padding the vector
+            vector_pad_size = n - vector.size
+            try:
+                if vector.ndim == 1:
+                    #print(f"Padding vector: vector_pad_size = {vector_pad_size}")
+                    vector = np.pad(vector, (0, vector_pad_size), mode='constant', constant_values=0)
+                elif vector.ndim == 2 and vector.shape[0] == 1:
+                    #print(f"Padding 2D vector: vector_pad_size = {vector_pad_size}")
+                    vector = np.pad(vector, ((0, 0), (0, vector_pad_size)), mode='constant', constant_values=0)
+                else:
+                    raise ValueError(f"Unexpected vector shape: {vector.shape}")
+                #print(f"Vector after padding:\n{vector}")
+            except ValueError as e:
+                print(f"Error padding vector: {e}")
+                print(f"Vector shape: {vector.shape}")
+                print(
+                    f"Padding dimensions: {(0, vector_pad_size) if vector.ndim == 1 else ((0, 0), (0, vector_pad_size))}")
+                raise
+
+            # Ensuring the diagonal elements are not zero
             for i in range(n):
                 if matrix[i][i] == 0:
                     matrix[i][i] = 1
+
         return matrix, vector
+
+
     
     def _make_hermitian(self, matrix, vector):
         # this function assumes that the matrix is square

@@ -14,7 +14,7 @@ from scipy.sparse import vstack, hstack, eye, csr_matrix as sparse
 from scipy.sparse.linalg import spsolve
 
 from pypower.pipsver import pipsver
-
+from .HHL_conversion import hhl_helper
 
 EPS = finfo(float).eps
 
@@ -386,8 +386,12 @@ def pips(f_fcn, x0=None, A=None, l=None, u=None, xmin=None, xmax=None,
             hstack([dg.T, sparse((neq, neq))])
         ])
         bb = r_[-N, -g]
-        print("Using SPSolve for Interior Point Method (OPF) .........")
-        dxdlam = spsolve(Ab.tocsr(), bb)
+        
+        print("Calling HHL for OPF......................")
+        Ab_dense = Ab.toarray()  ## create a dense version of Ab
+        hhl = hhl_helper()  ## initialize an instance of hhl_helper
+        dxdlam =  hhl.run_HHL(Ab_dense, bb, 1e-8)  ## update with HHL
+        #dxdlam = spsolve(Ab.tocsr(), bb)
 
         if any(isnan(dxdlam)):
             if opt["verbose"]:

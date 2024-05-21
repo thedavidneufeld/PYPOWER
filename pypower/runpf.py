@@ -36,6 +36,15 @@ from pypower.idx_bus import PD, QD, VM, VA, GS, BUS_TYPE, PV, PQ, REF
 from pypower.idx_brch import PF, PT, QF, QT
 from pypower.idx_gen import PG, QG, VG, QMAX, QMIN, GEN_BUS, GEN_STATUS
 
+from pypower.case9 import case9
+from pypower.case4gs import case4gs
+from pypower.case6ww import case6ww
+from pypower.case14 import case14
+from pypower.case24_ieee_rts import case24_ieee_rts
+from pypower.case30 import case30
+from pypower.case39 import case39
+from pypower.case57 import case57
+from pypower.case118 import case118
 
 def runpf(casedata=None, ppopt=None, fname='', solvedcase=''):
     """Runs a power flow.
@@ -323,4 +332,44 @@ def runpf(casedata=None, ppopt=None, fname='', solvedcase=''):
 
 
 if __name__ == '__main__':
-    runpf()
+    #runpf()
+    #print('Case 9...................')
+    #ppc = case9()
+    #runpf(ppc)
+
+    # print('Case 4gs...................')
+    # ppc = case4gs()
+    # runpf(ppc)
+
+    print('Case 6ww...................')
+    ppc = case6ww()
+    runpf(ppc)
+
+    print('Case 14...................')
+    ppc = case14()
+    runpf(ppc)
+
+    print('Case 24 ieee rts...................')
+    ppc = case24_ieee_rts()
+    runpf(ppc)
+
+    print('Case 30...................')
+    ppc = case30()
+    runpf(ppc)
+
+    print('Case 39...................')
+    ppc = case39()
+    runpf(ppc)
+
+    print('Case 57...................')
+    ppc = case57()
+    runpf(ppc)
+
+    print('Case 118...................')
+    ppc = case118()
+    runpf(ppc)
+
+    print('Case 300...................')
+    ppc = case300()
+    runpf(ppc)
+
